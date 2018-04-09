@@ -8,6 +8,7 @@
         ElementFinish,
         
         Text,
+        NewLine,
 
         CommentStart,
         CommentEnd
