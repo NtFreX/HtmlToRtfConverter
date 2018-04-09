@@ -6,10 +6,7 @@
         ElementClose,
         ElementInlineFinish,
         ElementFinish,
-
-        Attribute,
-        AttributeValueSeperator,
-        AttributeValueFinish,
+        
         Text,
 
         CommentStart,

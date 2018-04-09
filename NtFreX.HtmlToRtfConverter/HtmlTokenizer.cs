@@ -1,8 +1,4 @@
-﻿using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text.RegularExpressions;
-
-namespace NtFreX.HtmlToRtfConverter
+﻿namespace NtFreX.HtmlToRtfConverter
 {
     public class HtmlTokenizer : Tokenizer<
         HtmlToken,
@@ -18,11 +14,7 @@ namespace NtFreX.HtmlToRtfConverter
             TokenDefinitions.Add(new HtmlTokenDefinition(HtmlTokenType.ElementInlineFinish, @"^\/>"));
             TokenDefinitions.Add(new HtmlTokenDefinition(HtmlTokenType.ElementOpen, @"^<"));
             TokenDefinitions.Add(new HtmlTokenDefinition(HtmlTokenType.ElementClose, @"^>"));
-
-            TokenDefinitions.Add(new HtmlTokenDefinition(HtmlTokenType.Attribute, @"^="));
-            TokenDefinitions.Add(new HtmlTokenDefinition(HtmlTokenType.AttributeValueSeperator, "^:"));
-            TokenDefinitions.Add(new HtmlTokenDefinition(HtmlTokenType.AttributeValueFinish, "^;"));
-
+            
             var value = string.Empty;
             foreach (var tokenDefinition in TokenDefinitions)
             {

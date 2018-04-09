@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace NtFreX.HtmlToRtfConverter
 {
@@ -32,25 +34,28 @@ namespace NtFreX.HtmlToRtfConverter
         }
         private static HtmlDomEntity ParseElement(IEnumerator<HtmlToken> enumerator)
         {
-            var isElementClosed = false;
+            var isElementOpen = true;
             var element = new HtmlElement();
+            var index = -1;
             while (enumerator.MoveNext() &&
                    enumerator.Current != null &&
                    enumerator.Current.TokenType != HtmlTokenType.ElementFinish &&
                    enumerator.Current.TokenType != HtmlTokenType.ElementInlineFinish)
             {
                 if (string.IsNullOrEmpty(element.Name))
-                    element.Name = ParseElementName(enumerator);
-                else if (enumerator.Current.TokenType == HtmlTokenType.Attribute)
-                    element.Attributes.AddRange(ParseAttribute(enumerator));
-                else if (enumerator.Current.TokenType == HtmlTokenType.ElementClose)
-                    isElementClosed = true;
-                else if (isElementClosed)
+                    element.Name = ParseElementName(enumerator, out index);
+                if (enumerator.Current.TokenType == HtmlTokenType.ElementClose)
+                    isElementOpen = false;
+                else if (isElementOpen)
+                    element.Attributes.AddRange(ParseAttribute(enumerator, index));
+                else
                 {
                     var entity = Parse(enumerator);
                     if (entity != null)
                         element.Children.Add(entity);
                 }
+
+                index = 0;
             }
 
             if (enumerator.Current?.TokenType == HtmlTokenType.ElementFinish)
@@ -73,40 +78,58 @@ namespace NtFreX.HtmlToRtfConverter
             }
             return comment;
         }
-        private static string ParseElementName(IEnumerator<HtmlToken> enumerator)
+        private static string ParseElementName(IEnumerator<HtmlToken> enumerator, out int index)
         {
-            while (enumerator.Current != null && enumerator.Current.TokenType != HtmlTokenType.Text)
+            var elementRegex = new Regex("[a-zA-Z][a-zA-Z0-9]*");
+            var matches = elementRegex.Matches(enumerator.Current?.Value);
+
+            if (matches.Count > 0)
             {
-                if (!enumerator.MoveNext())
-                    return null;
+                index = matches[0].Index + matches[0].Value.Length;
+                return matches[0].Value;
             }
-
-            return enumerator.Current?.Value;
+            index = -1;
+            return null;
         }
-        private static IEnumerable<HtmlAttribute> ParseAttribute(IEnumerator<HtmlToken> enumerator)
-        {
-            var isAttributeValue = false;
-            string currentAttributeName = null;
 
-            while (enumerator.MoveNext() &&
-                   enumerator.Current != null &&
-                   enumerator.Current.TokenType != HtmlTokenType.ElementClose &&
-                   enumerator.Current.TokenType != HtmlTokenType.ElementInlineFinish)
+        private static IEnumerable<HtmlAttribute> ParseAttribute(IEnumerator<HtmlToken> enumerator, int i)
+        {
+            var attributeStartRegex = new Regex("([a-zA-Z][a-zA-Z0-9]*=)(\"¬|')");
+
+            var index = i;
+            while (index < enumerator.Current.Value.Length)
             {
-                if (!isAttributeValue && enumerator.Current.TokenType == HtmlTokenType.Text)
-                    currentAttributeName = enumerator.Current.Value;
-                else if (!isAttributeValue && enumerator.Current.TokenType == HtmlTokenType.AttributeValueSeperator)
-                    isAttributeValue = true;
-                else if (isAttributeValue && enumerator.Current.TokenType == HtmlTokenType.Text)
+                var match = attributeStartRegex.Match(enumerator.Current.Value, index);
+                if (match.Success)
                 {
+                    var attributeName = match.Value.Substring(0, match.Value.IndexOf("=", StringComparison.InvariantCulture));
+                    var attributeStartOne = match.Value.IndexOf("\"", StringComparison.InvariantCulture);
+                    var attributeStartTwo = match.Value.IndexOf("'", StringComparison.InvariantCulture);
+                    var attributeStartType = attributeStartTwo > attributeStartOne ? '\'' : '"';
+                    var attributeStart = Math.Max(attributeStartTwo, attributeStartOne);
+                    var attributeValue = string.Empty;
+                    var startIndex = match.Index + attributeStart + 1;
+                    var isEscaped = false;
+                    for (index = startIndex; index < enumerator.Current.Value.Length; index++)
+                    {
+                        if (!isEscaped && enumerator.Current.Value[index] == attributeStartType)
+                            break;
+                        if (!isEscaped && enumerator.Current.Value[index] == '\\')
+                            isEscaped = true;
+                        else
+                        {
+                            attributeValue += enumerator.Current.Value[index];
+                            isEscaped = false;
+                        }
+
+                    }
                     yield return new HtmlAttribute
                     {
-                        Name = currentAttributeName,
-                        Value = enumerator.Current.Value
+                        Name = attributeName,
+                        Value = attributeValue
                     };
                 }
-                else if (isAttributeValue && enumerator.Current.TokenType == HtmlTokenType.AttributeValueFinish)
-                    isAttributeValue = false;
+                else break;
             }
         }
     }

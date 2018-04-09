@@ -13,6 +13,7 @@ namespace NtFreX.HtmlToRtfConverter.Demo
     <head>
     </head>
     <body>
+        <!-- this is just a comment -->
         <div style='color:red;'>
             <p />
             Hello world
