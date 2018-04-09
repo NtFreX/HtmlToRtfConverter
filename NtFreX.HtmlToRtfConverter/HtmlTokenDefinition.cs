@@ -2,12 +2,12 @@
 {
     public class HtmlTokenDefinition : TokenDefinition<HtmlTokenMatch>
     {
-        private readonly HtmlTokenType _returnsToken;
+        public HtmlTokenType ReturnsToken { get; }
 
         public HtmlTokenDefinition(HtmlTokenType returnsToken, string regexPattern)
             : base(regexPattern)
         {
-            _returnsToken = returnsToken;
+            ReturnsToken = returnsToken;
         }
 
         public override HtmlTokenMatch Match(string inputString)
@@ -15,7 +15,7 @@
             var result = base.Match(inputString);
             if (result.IsMatch)
             {
-                result.TokenType = _returnsToken;
+                result.TokenType = ReturnsToken;
             }
             return result;
         }

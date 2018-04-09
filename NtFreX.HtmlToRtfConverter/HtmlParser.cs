@@ -13,17 +13,26 @@ namespace NtFreX.HtmlToRtfConverter
             {
                 while (enumerator.MoveNext() && enumerator.Current != null)
                 {
-                    if (enumerator.Current.TokenType == HtmlTokenType.ElementOpen)
-                    {
-                        yield return ParseElement(enumerator);
-                    }
+                    var entity = Parse(enumerator);
+                    if (entity != null)
+                        yield return entity;
                 }
             }
         }
-
+        
+        private static HtmlDomEntity Parse(IEnumerator<HtmlToken> enumerator)
+        {
+            if (enumerator.Current.TokenType == HtmlTokenType.CommentStart)
+                return ParseComment(enumerator);
+            if (enumerator.Current.TokenType == HtmlTokenType.ElementOpen)
+                return ParseElement(enumerator);
+            if (enumerator.Current.TokenType == HtmlTokenType.Text)
+                return new HtmlText { Text = enumerator.Current.Value };
+            return null;
+        }
         private static HtmlDomEntity ParseElement(IEnumerator<HtmlToken> enumerator)
         {
-            var state = 1;
+            var isElementClosed = false;
             var element = new HtmlElement();
             while (enumerator.MoveNext() &&
                    enumerator.Current != null &&
@@ -33,16 +42,36 @@ namespace NtFreX.HtmlToRtfConverter
                 if (string.IsNullOrEmpty(element.Name))
                     element.Name = ParseElementName(enumerator);
                 else if (enumerator.Current.TokenType == HtmlTokenType.Attribute)
-                {
-                    state = 0;
                     element.Attributes.AddRange(ParseAttribute(enumerator));
+                else if (enumerator.Current.TokenType == HtmlTokenType.ElementClose)
+                    isElementClosed = true;
+                else if (isElementClosed)
+                {
+                    var entity = Parse(enumerator);
+                    if (entity != null)
+                        element.Children.Add(entity);
                 }
-                else if (enumerator.Current.TokenType == HtmlTokenType.ElementOpen)
-                    element.Children.Add(ParseElement(enumerator));
-                else if (state == 0 && (enumerator.Current.TokenType == HtmlTokenType.Text || enumerator.Current.TokenType == HtmlTokenType.Spacing))
-                    element.Children.Add(new HtmlText { Text = enumerator.Current.Value });
             }
+
+            if (enumerator.Current?.TokenType == HtmlTokenType.ElementFinish)
+            {
+                while (enumerator.Current.TokenType != HtmlTokenType.ElementClose)
+                    enumerator.MoveNext();
+            }
+
             return element;
+        }
+        private static HtmlComment ParseComment(IEnumerator<HtmlToken> enumerator)
+        {
+            var comment = new HtmlComment();
+            while (enumerator.MoveNext() &&
+                   enumerator.Current != null &&
+                   enumerator.Current.TokenType != HtmlTokenType.CommentEnd)
+            {
+                if (enumerator.Current.TokenType == HtmlTokenType.Text)
+                    comment.Value += enumerator.Current.Value;
+            }
+            return comment;
         }
         private static string ParseElementName(IEnumerator<HtmlToken> enumerator)
         {
@@ -56,26 +85,28 @@ namespace NtFreX.HtmlToRtfConverter
         }
         private static IEnumerable<HtmlAttribute> ParseAttribute(IEnumerator<HtmlToken> enumerator)
         {
-            var state = 0;
-            var currentAttribute = new HtmlAttribute();
+            var isAttributeValue = false;
+            string currentAttributeName = null;
 
             while (enumerator.MoveNext() &&
                    enumerator.Current != null &&
                    enumerator.Current.TokenType != HtmlTokenType.ElementClose &&
                    enumerator.Current.TokenType != HtmlTokenType.ElementInlineFinish)
             {
-                if (state == 0 && enumerator.Current.TokenType == HtmlTokenType.Text)
-                    currentAttribute.Name = enumerator.Current.Value;
-                else if (state == 0 && enumerator.Current.TokenType == HtmlTokenType.AttributeValueSeperator)
-                    state = 1;
-                else if (state == 1 && enumerator.Current.TokenType == HtmlTokenType.Text)
+                if (!isAttributeValue && enumerator.Current.TokenType == HtmlTokenType.Text)
+                    currentAttributeName = enumerator.Current.Value;
+                else if (!isAttributeValue && enumerator.Current.TokenType == HtmlTokenType.AttributeValueSeperator)
+                    isAttributeValue = true;
+                else if (isAttributeValue && enumerator.Current.TokenType == HtmlTokenType.Text)
                 {
-                    currentAttribute.Value = enumerator.Current.Value;
-                    yield return currentAttribute;
-                    currentAttribute = new HtmlAttribute();
+                    yield return new HtmlAttribute
+                    {
+                        Name = currentAttributeName,
+                        Value = enumerator.Current.Value
+                    };
                 }
-                else if (state == 1 && enumerator.Current.TokenType == HtmlTokenType.AttributeValueFinish)
-                    state = 0;
+                else if (isAttributeValue && enumerator.Current.TokenType == HtmlTokenType.AttributeValueFinish)
+                    isAttributeValue = false;
             }
         }
     }

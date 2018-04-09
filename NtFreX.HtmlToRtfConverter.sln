@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NtFreX.HtmlToRtfConverter", "NtFreX.HtmlToRtfConverter\NtFreX.HtmlToRtfConverter.csproj", "{7D16A152-6186-4756-B644-A757FFEDA2B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NtFreX.HtmlToRtfConverter", "NtFreX.HtmlToRtfConverter\NtFreX.HtmlToRtfConverter.csproj", "{7D16A152-6186-4756-B644-A757FFEDA2B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NtFreX.HtmlToRtfConverter.Demo", "NtFreX.HtmlToRtfConverter.Demo\NtFreX.HtmlToRtfConverter.Demo.csproj", "{B3BE3F54-C7CC-4AE4-8AD0-58ACC5570D76}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NtFreX.HtmlToRtfConverter.Demo", "NtFreX.HtmlToRtfConverter.Demo\NtFreX.HtmlToRtfConverter.Demo.csproj", "{B3BE3F54-C7CC-4AE4-8AD0-58ACC5570D76}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NtFreX.HtmlToRtfConverter.Tests", "NtFreX.HtmlToRtfConverter.Tests\NtFreX.HtmlToRtfConverter.Tests.csproj", "{55D47122-3853-4250-8C34-0D9313B5D078}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{B3BE3F54-C7CC-4AE4-8AD0-58ACC5570D76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3BE3F54-C7CC-4AE4-8AD0-58ACC5570D76}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B3BE3F54-C7CC-4AE4-8AD0-58ACC5570D76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55D47122-3853-4250-8C34-0D9313B5D078}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55D47122-3853-4250-8C34-0D9313B5D078}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55D47122-3853-4250-8C34-0D9313B5D078}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55D47122-3853-4250-8C34-0D9313B5D078}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

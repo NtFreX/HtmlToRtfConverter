@@ -11,6 +11,8 @@
         AttributeValueSeperator,
         AttributeValueFinish,
         Text,
-        Spacing
+
+        CommentStart,
+        CommentEnd
     }
 }

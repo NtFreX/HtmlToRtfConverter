@@ -4,16 +4,16 @@ namespace NtFreX.HtmlToRtfConverter
 {
     public abstract class TokenDefinition<TTokenMatch> where TTokenMatch : TokenMatch, new()
     {
-        private readonly Regex _regex;
+        public Regex Regex { get; }
 
         protected TokenDefinition(string regexPattern)
         {
-            _regex = new Regex(regexPattern, RegexOptions.IgnoreCase);
+            Regex = new Regex(regexPattern, RegexOptions.IgnoreCase);
         }
 
         public virtual TTokenMatch Match(string inputString)
         {
-            var match = _regex.Match(inputString);
+            var match = Regex.Match(inputString);
             if (match.Success)
             {
                 string remainingText = string.Empty;
