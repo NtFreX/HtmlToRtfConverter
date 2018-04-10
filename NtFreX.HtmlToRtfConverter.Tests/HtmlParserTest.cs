@@ -5,6 +5,66 @@ namespace NtFreX.HtmlToRtfConverter.Tests
 {
     public class HtmlParserTest
     {
+        [Fact]
+        public void Can_Parse_VoidElement()
+        {
+            var html = "<div><!--block--><br></div>";
+
+            var result = HtmlParser.Parse(html)
+                .ToList();
+
+            Assert.Single(result);
+            Assert.True(result.First() is HtmlElement);
+
+            var element = result.First() as HtmlElement;
+            Assert.NotNull(element);
+            Assert.Equal("div", element.Name);
+            Assert.Equal(2, element.Children.Count);
+            Assert.Empty(element.Attributes);
+
+            Assert.True(element.Children.First() is HtmlComment);
+            var comment = element.Children.First() as HtmlComment;
+            Assert.NotNull(comment);
+            Assert.Equal("block", comment.Value);
+
+            Assert.True(element.Children.Last() is HtmlElement);
+            var brEle = element.Children.Last() as HtmlElement;
+            Assert.NotNull(brEle);
+            Assert.Equal("br", brEle.Name);
+            Assert.Empty(brEle.Attributes);
+            Assert.Empty(brEle.Children);
+        }
+
+        [Fact]
+        public void Can_Parse_InlineElementFinish()
+        {
+            var html = "<div><!--block--><br/></div>";
+
+            var result = HtmlParser.Parse(html)
+                .ToList();
+
+            Assert.Single(result);
+            Assert.True(result.First() is HtmlElement);
+
+            var element = result.First() as HtmlElement;
+            Assert.NotNull(element);
+            Assert.Equal("div", element.Name);
+            Assert.Equal(2, element.Children.Count);
+            Assert.Empty(element.Attributes);
+
+            Assert.True(element.Children.First() is HtmlComment);
+            var comment = element.Children.First() as HtmlComment;
+            Assert.NotNull(comment);
+            Assert.Equal("block", comment.Value);
+
+            Assert.True(element.Children.Last() is HtmlElement);
+            var brEle = element.Children.Last() as HtmlElement;
+            Assert.NotNull(brEle);
+            Assert.Equal("br", brEle.Name);
+            Assert.Empty(brEle.Attributes);
+            Assert.Empty(brEle.Children);
+        }
+
         [Theory]
         [InlineData("<{0}/>")]
         [InlineData("<{0}></{0}>")]
