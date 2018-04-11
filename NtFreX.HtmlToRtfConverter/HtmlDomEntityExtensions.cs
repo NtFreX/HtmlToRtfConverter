@@ -23,10 +23,21 @@ namespace NtFreX.HtmlToRtfConverter
                     value.AppendLine($"{tabs}{text.Text}");
                 else if (entity is HtmlElement element)
                 {
-                    value.AppendLine($"{tabs}<{element.Name}>");
+                    var attribute = GetAttributeHtml(element);
+                    value.AppendLine($"{tabs}<{element.Name} {attribute}>");
                     value.AppendLine(GetHtmlInner(element.Children, tabCount + 1));
                     value.AppendLine($"{tabs}</{element.Name}>");
                 }
+            }
+            return value.ToString();
+        }
+
+        private static string GetAttributeHtml(HtmlElement element)
+        {
+            var value = new StringBuilder();
+            foreach (var attribute in element.Attributes)
+            {
+                value.Append($"{attribute.Name}='{attribute.Value}' ");
             }
             return value.ToString();
         }

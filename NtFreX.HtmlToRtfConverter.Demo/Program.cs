@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 
 namespace NtFreX.HtmlToRtfConverter.Demo
@@ -79,29 +80,6 @@ namespace NtFreX.HtmlToRtfConverter.Demo
 	<!--block-->
 	<br/>
 </div>
-<ol>
-	<li>
-		<!--block-->
-		asdasd
-		<ol>
-			<li><!--block-->asdasd</li>
-			<li><!--block-->asdasd</li>
-			<li>
-				<!--block-->
-				asd
-				<ol>
-					<li><!--block-->asdasd</li>
-					<li><!--block-->asdas</li>
-					<li><!--block-->asd</li>
-				</ol>
-			</li>
-			<li><!--block-->asdasd</li>
-			<li style='color:red;'><!--block-->asd</li>
-		</ol>
-	</li>
-	<li><!--block-->asdas</li>
-	<li><!--block-->asd</li>
-</ol>
 <div>
 	<!--block-->
 	<br/>
@@ -131,21 +109,30 @@ namespace NtFreX.HtmlToRtfConverter.Demo
             
             Console.WriteLine(parsedHtml);
 
-            var generator = new RtfGenerator();
-            var value = generator.Generate(html);
+            var rtfGenerator = new RtfGeneratorBuilder()
+                .Element(HtmlElementType.Pre, builder =>
+                    builder.FontSize(12.0f)
+                        .ForegroundColor(Color.Blue)
+                        .BackgroundColor(Color.AliceBlue))
+                .Element(HtmlElementType.Blockquote, builder =>
+                    builder.FontSize(8f)
+                        .ForegroundColor(Color.Black)
+                        .BackgroundColor(Color.LightSlateGray)
+                        .HorizontalAligment(HorizontalAligment.Center))
+                .Build();
+            
+            var value = rtfGenerator.Generate(html);
 
             var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".rtf");
-
             File.WriteAllText(path, value);
 
-            var process = new Process
+            new Process
             {
                 StartInfo = new ProcessStartInfo(path)
                 {
                     UseShellExecute = true
                 }
-            };
-            process.Start();
+            }.Start();
         }
     }
 }

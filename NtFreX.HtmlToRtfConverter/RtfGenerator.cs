@@ -6,51 +6,48 @@ using System.Text;
 
 namespace NtFreX.HtmlToRtfConverter
 {
-    //TODO: lists (ordered, unordered); paragraphs
+    //TODO: ¨multilevel lists (ordered, unordered); paragraphs
     public class RtfGenerator
     {
+        private readonly RtfGeneratorSubject _subject;
+
         private const string StyleAttributeName = "style";
 
         private const string ColorStyleName = "color";
         private const string BackgrounColorStyleName = "background-color";
         
-        private const string StrongElementName = "strong";
-        private const string EmElementName = "em";
-        private const string DelElementName = "del";
-        private const string LiElementName = "li";
-        private const string OlElementName = "ol";
-        private const string UlElementName = "ul";
-        private const string PElementName = "p";
-        private const string DivElementName = "div";
-        private const string BrElementName = "br";
-        private const string BlockQuoteElementName = "blockquote";
-        private const string PreElementName = "pre";
-
-        private readonly string[] _clearingElements =
+        private readonly HtmlElementType[] _clearingElements =
         {
-            PElementName,
-            DivElementName,
-            BlockQuoteElementName,
-            PreElementName,
-            LiElementName,
-            OlElementName,
-            UlElementName
+            HtmlElementType.P,
+            HtmlElementType.Div,
+            HtmlElementType.Blockquote,
+            HtmlElementType.Pre,
+            HtmlElementType.Li,
+            HtmlElementType.Ol,
+            HtmlElementType.Ul
         };
         
         private int _listLevel = -1;
         private bool _isOrderedList;
 
-        private List<Color> _colors; 
+        private List<Color> _colors;
+        private List<string> _fonts;
+
+        internal RtfGenerator(RtfGeneratorSubject subject)
+        {
+            _subject = subject;
+        }
 
         public string Generate(string html)
         {
             _colors = new List<Color>();
+            _fonts = new List<string>();
 
             var dom = HtmlParser.Parse(html);
             var rtf = GenerateInternal(dom, true);
 
             var value = new StringBuilder();
-            value.AppendLine(@"{\rtf1\ansi\deff0 " + GenerateColorTable());
+            value.AppendLine(@"{\rtf1\ansi\deff0 " + GenerateFontTable() + GenerateColorTable());
             value.AppendLine(rtf);
             value.AppendLine("}");
             return value.ToString();
@@ -63,20 +60,27 @@ namespace NtFreX.HtmlToRtfConverter
             {
                 if (obj is HtmlElement element)
                 {
-                    if (element.Name.ToLower() == LiElementName)
-                        _listLevel++;
+                    var name = new string(element.Name.Select((x, i) => i == 0 ? Char.ToUpper(x) : Char.ToLower(x)).ToArray());
+                    if (Enum.TryParse(name, out HtmlElementType elementType))
+                    {
+                        if (elementType == HtmlElementType.Ol || elementType == HtmlElementType.Ul)
+                            _listLevel++;
 
-                    var openingModifiers = string.Join(string.Empty, GetElementOpeningModifiers(element, isCleared));
-                    var closingModifiers = string.Join(string.Empty, GetElementClosingModifiers(element));
-                    var attributeModifiers = string.Join(string.Empty, GetAttributeModifiers(element));
+                        var openingModifiers = string.Join(string.Empty, GetElementOpeningModifiers(elementType, isCleared));
+                        var closingModifiers = string.Join(string.Empty, GetElementClosingModifiers(elementType));
+                        var attributeModifiers = string.Join(string.Empty, GetAttributeModifiers(element));
+                        var configurationModifiers = string.Join(string.Empty, GetConfigurationModifiers(elementType));
+                        var innerRtf = GenerateInternal(element.Children, false);
 
-                    value.AppendLine("{" + openingModifiers + attributeModifiers +
-                                        GenerateInternal(element.Children, false) + closingModifiers + @"}");
+                        value.AppendLine("{" + $"{openingModifiers}{attributeModifiers}" +
+                                         "{" + $"{configurationModifiers}{innerRtf}" + "}" + 
+                                         closingModifiers + @"}");
 
-                    if (element.Name.ToLower() == LiElementName)
-                        _listLevel--;
+                        if (elementType == HtmlElementType.Ol || elementType == HtmlElementType.Ul)
+                            _listLevel--;
 
-                    isCleared = true;
+                        isCleared = true;
+                    }
                 }
                 else if (obj is HtmlText text)
                 {
@@ -105,40 +109,62 @@ namespace NtFreX.HtmlToRtfConverter
 
             return text;
         }
-        private IEnumerable<string> GetElementClosingModifiers(HtmlElement element)
-        {
-            var name = element.Name.ToLower();
 
-            if (_clearingElements.Contains(name))
+        private IEnumerable<string> GetConfigurationModifiers(HtmlElementType elementType)
+        {
+            if (_subject.ElementSubjects.ContainsKey(elementType))
+            {
+                var configuration = _subject.ElementSubjects[elementType];
+
+                if (!configuration.ForegroundColor.IsEmpty)
+                    yield return @"\cf" + GetColorNumber(configuration.ForegroundColor);
+                if (!configuration.BackgroundColor.IsEmpty)
+                {
+                    var colorNumber = GetColorNumber(configuration.BackgroundColor);
+                    yield return $@"\chshdng10000\chcbpat{colorNumber}\chcfpat{colorNumber}\cb{colorNumber}";
+                }
+                if (Math.Abs(configuration.FontSize - default(float)) < 0)
+                    yield return $"fs{configuration.FontSize}";
+                if (configuration.HorizontalAligment == HorizontalAligment.Left)
+                    yield return @"\ql";
+                if (configuration.HorizontalAligment == HorizontalAligment.Right)
+                    yield return @"\qr";
+                if (configuration.HorizontalAligment == HorizontalAligment.Center)
+                    yield return @"\qc";
+                if (!string.IsNullOrEmpty(configuration.FontStyle))
+                    yield return @"\f" + GetFontNumber(configuration.FontStyle);
+            }
+        }
+        private IEnumerable<string> GetElementClosingModifiers(HtmlElementType elementType)
+        {
+            if (_clearingElements.Contains(elementType))
                 yield return @"\par";
         }
-        private IEnumerable<string> GetElementOpeningModifiers(HtmlElement element, bool isCleared)
+        private IEnumerable<string> GetElementOpeningModifiers(HtmlElementType elementType, bool isCleared)
         {
-            var name = element.Name.ToLower();
-            
-            if (!isCleared && _clearingElements.Contains(name))
+            if (!isCleared && _clearingElements.Contains(elementType))
                 yield return @"\par";
-            if (name == StrongElementName)
+            if (elementType == HtmlElementType.Strong)
                 yield return @"\b";
-            if (name == EmElementName)
+            if (elementType == HtmlElementType.Em)
                 yield return @"\i";
-            if (name == DelElementName)
+            if (elementType == HtmlElementType.Del)
                 yield return @"\strike";
-            if (name == OlElementName)
+            if (elementType == HtmlElementType.Ol)
                 _isOrderedList = true;
-            if (name == UlElementName)
+            if (elementType == HtmlElementType.Ul)
                 _isOrderedList = false;
-            if (name == LiElementName)
+            if (elementType == HtmlElementType.Li)
             {
                 var indent = _listLevel * 400;
                 var symbolType = _isOrderedList ? @"\pnlvl3" : @"\pnlvlblt\pntxtb\u8226?\tab";
                 yield return @"{\li" + indent + @"\pntext\pn" + symbolType + @"}";
             }
-            if (name == BlockQuoteElementName)
+            if (elementType == HtmlElementType.Blockquote)
                 yield return $@"\cf{GetColorNumber(Color.LightSlateGray)}\qc";
-            if (name == PreElementName)
+            if (elementType == HtmlElementType.Pre)
                 yield return @"\brdrt\brdrs\brdrb\brdrs\brdrl\brdrs\brdrr\brdrs\brdrw10\brsp20\brdrcf0";
-            if (name == BrElementName)
+            if (elementType == HtmlElementType.Br)
                 yield return @"\line";
         }
         private IEnumerable<string> GetAttributeModifiers(HtmlElement element)
@@ -162,6 +188,18 @@ namespace NtFreX.HtmlToRtfConverter
                 }
             }
         }
+
+        private int GetFontNumber(string font)
+        {
+            var index = _fonts.FindIndex(x => x == font);
+            if (index >= 0)
+            {
+                return index + 1;
+            }
+
+            _fonts.Add(font);
+            return _fonts.Count;
+        }
         private int GetColorNumber(Color color)
         {
             var index = _colors.FindIndex(x => x.A == color.A && x.B == color.B && x.G == color.G && x.R == color.R);
@@ -172,6 +210,19 @@ namespace NtFreX.HtmlToRtfConverter
 
             _colors.Add(color);
             return _colors.Count;
+        }
+
+        private string GenerateFontTable()
+        {
+            var value = new StringBuilder();
+            value.Append(@"{\fonttbl;");
+            if (!string.IsNullOrWhiteSpace(_subject.FontStyle))
+                value.Append(@"{\f0 " + _subject.FontStyle + ";}");
+            for (int i = 0; i < _fonts.Count; i++)
+                value.Append(@"{\f" + (i + 1) + " " + _fonts[i] + ";}");
+            value.Append("}");
+            return value.ToString();
+
         }
         private string GenerateColorTable()
         {

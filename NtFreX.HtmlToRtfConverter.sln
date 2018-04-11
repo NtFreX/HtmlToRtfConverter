@@ -7,7 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NtFreX.HtmlToRtfConverter",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NtFreX.HtmlToRtfConverter.Demo", "NtFreX.HtmlToRtfConverter.Demo\NtFreX.HtmlToRtfConverter.Demo.csproj", "{B3BE3F54-C7CC-4AE4-8AD0-58ACC5570D76}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NtFreX.HtmlToRtfConverter.Tests", "NtFreX.HtmlToRtfConverter.Tests\NtFreX.HtmlToRtfConverter.Tests.csproj", "{55D47122-3853-4250-8C34-0D9313B5D078}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NtFreX.HtmlToRtfConverter.Tests", "NtFreX.HtmlToRtfConverter.Tests\NtFreX.HtmlToRtfConverter.Tests.csproj", "{55D47122-3853-4250-8C34-0D9313B5D078}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{429591B3-D3CE-4245-9FF5-9485543F9DCC}"
+	ProjectSection(SolutionItems) = preProject
+		readme.txt = readme.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
