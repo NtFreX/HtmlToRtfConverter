@@ -2,6 +2,9 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using NtFreX.HtmlToRtfConverter.Html;
+using NtFreX.HtmlToRtfConverter.Html.Dom;
+using NtFreX.HtmlToRtfConverter.Rtf;
 
 namespace NtFreX.HtmlToRtfConverter.Demo
 {

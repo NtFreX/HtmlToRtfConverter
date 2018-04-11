@@ -1,4 +1,4 @@
-﻿namespace NtFreX.HtmlToRtfConverter
+﻿namespace NtFreX.HtmlToRtfConverter.Rtf
 {
     public enum HorizontalAligment
     {

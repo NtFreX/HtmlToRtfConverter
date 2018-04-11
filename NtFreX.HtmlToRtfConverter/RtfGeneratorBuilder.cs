@@ -1,4 +1,5 @@
 ﻿using System;
+using NtFreX.HtmlToRtfConverter.Html.Dom;
 
 namespace NtFreX.HtmlToRtfConverter
 {

@@ -1,6 +1,8 @@
 ﻿using System;
 
-namespace NtFreX.HtmlToRtfConverter
+using NtFreX.HtmlToRtfConverter.Tokenizer;
+
+namespace NtFreX.HtmlToRtfConverter.Html
 {
     public class HtmlTokenizer : Tokenizer<
         HtmlToken,

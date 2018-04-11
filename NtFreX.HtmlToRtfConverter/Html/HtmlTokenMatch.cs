@@ -1,4 +1,6 @@
-﻿namespace NtFreX.HtmlToRtfConverter
+﻿using NtFreX.HtmlToRtfConverter.Tokenizer;
+
+namespace NtFreX.HtmlToRtfConverter.Html
 {
     public class HtmlTokenMatch : TokenMatch
     {

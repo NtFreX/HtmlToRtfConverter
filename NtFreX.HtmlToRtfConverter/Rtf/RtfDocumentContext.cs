@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Text;
 
-namespace NtFreX.HtmlToRtfConverter
+namespace NtFreX.HtmlToRtfConverter.Rtf
 {
     internal class RtfDocumentContext
     {

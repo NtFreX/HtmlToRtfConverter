@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace NtFreX.HtmlToRtfConverter
+namespace NtFreX.HtmlToRtfConverter.Tokenizer
 {
     public abstract class TokenDefinition<TTokenMatch> where TTokenMatch : TokenMatch, new()
     {

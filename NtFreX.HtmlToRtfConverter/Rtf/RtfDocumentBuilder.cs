@@ -1,7 +1,8 @@
 ﻿using System.Drawing;
 using System.Text;
+using NtFreX.HtmlToRtfConverter.Html;
 
-namespace NtFreX.HtmlToRtfConverter
+namespace NtFreX.HtmlToRtfConverter.Rtf
 {
     internal class RtfDocumentBuilder
     {
@@ -43,11 +44,11 @@ namespace NtFreX.HtmlToRtfConverter
         }
         public RtfDocumentBuilder HorizontalAligment(HorizontalAligment aligment)
         {
-            if (aligment == HtmlToRtfConverter.HorizontalAligment.Left)
+            if (aligment == HtmlToRtfConverter.Rtf.HorizontalAligment.Left)
                 _document.Append(@"\ql");
-            else if (aligment == HtmlToRtfConverter.HorizontalAligment.Right)
+            else if (aligment == HtmlToRtfConverter.Rtf.HorizontalAligment.Right)
                 _document.Append(@"\qr");
-            else if (aligment == HtmlToRtfConverter.HorizontalAligment.Center)
+            else if (aligment == HtmlToRtfConverter.Rtf.HorizontalAligment.Center)
                 _document.Append(@"\qc");
             return this;
         }

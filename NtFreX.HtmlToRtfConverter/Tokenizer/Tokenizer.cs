@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace NtFreX.HtmlToRtfConverter
+namespace NtFreX.HtmlToRtfConverter.Tokenizer
 {
     public abstract class Tokenizer<TToken, TTokenMatch, TTokenDefinition>
         where TTokenMatch : TokenMatch, new()

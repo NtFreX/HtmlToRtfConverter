@@ -1,4 +1,5 @@
 using System.Linq;
+using NtFreX.HtmlToRtfConverter.Html;
 using Xunit;
 
 namespace NtFreX.HtmlToRtfConverter.Tests

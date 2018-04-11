@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace NtFreX.HtmlToRtfConverter
+using NtFreX.HtmlToRtfConverter.Html.Dom;
+
+namespace NtFreX.HtmlToRtfConverter.Html
 {
     public class HtmlParser
     {

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
+using NtFreX.HtmlToRtfConverter.Html.Dom;
+using NtFreX.HtmlToRtfConverter.Rtf;
 
 namespace NtFreX.HtmlToRtfConverter
 {

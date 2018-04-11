@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace NtFreX.HtmlToRtfConverter
+namespace NtFreX.HtmlToRtfConverter.Html
 {
     public static class HtmlColorHelper
     {

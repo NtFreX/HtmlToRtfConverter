@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace NtFreX.HtmlToRtfConverter
+namespace NtFreX.HtmlToRtfConverter.Html.Dom
 {
     public class HtmlElement : HtmlDomEntity
     {
