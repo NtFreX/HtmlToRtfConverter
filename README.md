@@ -2,6 +2,11 @@
 
 This is for educational purposes and not fully functional
 
+    var rtfConverter = new RtfConverter();
+    var value = rtfConverter.Convert(html);
+
+Or add custom styling
+
     var rtfConverter = new RtfConverterBuilder()
         .Element(HtmlElementType.Pre, builder =>
             builder.FontSize(12.0f)
