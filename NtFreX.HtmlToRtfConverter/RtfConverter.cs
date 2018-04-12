@@ -11,8 +11,6 @@ namespace NtFreX.HtmlToRtfConverter
     public class RtfConverter
     {
         private readonly RtfConverterSubject _subject;
-        
-        private RtfDocumentBuilder _documentBuilder;
 
         internal RtfConverter(RtfConverterSubject subject)
         {
@@ -28,14 +26,14 @@ namespace NtFreX.HtmlToRtfConverter
             => Convert(new[] {entity});
         public string Convert(IEnumerable<HtmlDomEntity> dom)
         {
-            _documentBuilder = new RtfDocumentBuilder(_subject);
+            var documentBuilder = new RtfDocumentBuilder(_subject);
 
-            ConvertInternal(dom, true);
+            ConvertInternal(dom, documentBuilder, true);
 
-            return _documentBuilder.Build();
+            return documentBuilder.Build();
         }
 
-        private void ConvertInternal(IEnumerable<HtmlDomEntity> dom, bool isCleared)
+        private void ConvertInternal(IEnumerable<HtmlDomEntity> dom, RtfDocumentBuilder documentBuilder, bool isCleared)
         {
             foreach (var obj in dom)
             {
@@ -46,24 +44,24 @@ namespace NtFreX.HtmlToRtfConverter
                         continue;
 
                     if (elementType == HtmlElementType.Ol || elementType == HtmlElementType.Ul)
-                        _documentBuilder.Context.ListLevel++;
+                        documentBuilder.Context.ListLevel++;
 
-                    _documentBuilder
+                    documentBuilder
                         .OpenContext()
                         .ApplyElementOpeningModifiers(elementType, isCleared)
                         .ApplyAttributeModifiers(element)
                             .OpenContext()
                             .ApplyConfigurationModifiers(_subject, elementType);
 
-                    ConvertInternal(element.Children, false);
+                    ConvertInternal(element.Children, documentBuilder, false);
 
-                    _documentBuilder
+                    documentBuilder
                         .CloseContext()
                         .ApplyElementClosingModifiers(elementType)
                         .CloseContext();
 
                     if (elementType == HtmlElementType.Ol || elementType == HtmlElementType.Ul)
-                        _documentBuilder.Context.ListLevel--;
+                        documentBuilder.Context.ListLevel--;
 
                     isCleared = true;
                 }
@@ -71,7 +69,7 @@ namespace NtFreX.HtmlToRtfConverter
                 {
                     var textValue = RemoveSpacing(text.Text);
                     if (!string.IsNullOrWhiteSpace(textValue))
-                        _documentBuilder.Text(textValue);                
+                        documentBuilder.Text(textValue);                
                 }
             }
         }
