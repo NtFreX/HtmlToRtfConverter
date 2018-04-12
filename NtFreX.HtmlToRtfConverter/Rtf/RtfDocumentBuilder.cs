@@ -7,14 +7,12 @@ namespace NtFreX.HtmlToRtfConverter.Rtf
     internal class RtfDocumentBuilder
     {
         private readonly StringBuilder _document = new StringBuilder();
-        private readonly RtfConverterSubject _subject;
 
+        public RtfConverterSubject Subject { get; }
         public RtfDocumentContext Context { get; } = new RtfDocumentContext();
 
         public RtfDocumentBuilder(RtfConverterSubject subject)
-        {
-            _subject = subject;
-        }
+            => Subject = subject;
 
         public RtfDocumentBuilder BackgroundColor(string htmlColor) => BackgroundColor(HtmlColorHelper.GetColor(htmlColor));
         public RtfDocumentBuilder BackgroundColor(Color color)
@@ -52,7 +50,7 @@ namespace NtFreX.HtmlToRtfConverter.Rtf
 
         public string Build()
         {
-            var fontTable = Context.GetFontTable(_subject.FontStyle);
+            var fontTable = Context.GetFontTable(Subject.FontStyle);
             var colorTable = Context.GetColorTable();
 
             var value = new StringBuilder();

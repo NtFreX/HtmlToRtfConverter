@@ -9,6 +9,7 @@ namespace NtFreX.HtmlToRtfConverter.Rtf
         private readonly List<Color> _colors = new List<Color>();
         private readonly List<string> _fonts = new List<string>();
 
+        //TODO: can we move this two properties to another place?
         public int ListLevel { get; set; }= -1;
         public bool IsOrderedList { get; set; }
 
