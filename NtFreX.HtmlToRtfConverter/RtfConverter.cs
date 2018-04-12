@@ -7,29 +7,35 @@ using NtFreX.HtmlToRtfConverter.Rtf;
 
 namespace NtFreX.HtmlToRtfConverter
 {
-    //TODO: ¨multilevel lists (ordered, unordered); paragraphs
-    public class RtfGenerator
+    //TODO: ¨multilevel lists (ordered, unordered); background color; paragraphs
+    public class RtfConverter
     {
-        private readonly RtfGeneratorSubject _subject;
+        private readonly RtfConverterSubject _subject;
         
         private RtfDocumentBuilder _documentBuilder;
 
-        internal RtfGenerator(RtfGeneratorSubject subject)
+        internal RtfConverter(RtfConverterSubject subject)
         {
             _subject = subject;
         }
 
-        public string Generate(string html)
+        public string Convert(string html)
+        {
+            var dom = HtmlParser.Parse(html);
+            return Convert(dom);
+        }
+        public string Convert(HtmlDomEntity entity)
+            => Convert(new[] {entity});
+        public string Convert(IEnumerable<HtmlDomEntity> dom)
         {
             _documentBuilder = new RtfDocumentBuilder(_subject);
 
-            var dom = HtmlParser.Parse(html);
-            GenerateInternal(dom, true);
+            ConvertInternal(dom, true);
 
             return _documentBuilder.Build();
         }
 
-        private void GenerateInternal(IEnumerable<HtmlDomEntity> dom, bool isCleared)
+        private void ConvertInternal(IEnumerable<HtmlDomEntity> dom, bool isCleared)
         {
             foreach (var obj in dom)
             {
@@ -49,7 +55,7 @@ namespace NtFreX.HtmlToRtfConverter
                             .OpenContext()
                             .ApplyConfigurationModifiers(_subject, elementType);
 
-                    GenerateInternal(element.Children, false);
+                    ConvertInternal(element.Children, false);
 
                     _documentBuilder
                         .CloseContext()

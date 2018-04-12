@@ -7,40 +7,20 @@ namespace NtFreX.HtmlToRtfConverter.Rtf
     internal class RtfDocumentBuilder
     {
         private readonly StringBuilder _document = new StringBuilder();
-        private readonly RtfGeneratorSubject _subject;
+        private readonly RtfConverterSubject _subject;
 
         public RtfDocumentContext Context { get; } = new RtfDocumentContext();
 
-        public RtfDocumentBuilder(RtfGeneratorSubject subject)
+        public RtfDocumentBuilder(RtfConverterSubject subject)
         {
             _subject = subject;
         }
 
-        public RtfDocumentBuilder BackgroundColor(string htmlColor)
-            => BackgroundColor(HtmlColorHelper.GetColor(htmlColor));
+        public RtfDocumentBuilder BackgroundColor(string htmlColor) => BackgroundColor(HtmlColorHelper.GetColor(htmlColor));
         public RtfDocumentBuilder BackgroundColor(Color color)
         {
             var colorNumber = Context.GetColorNumber(color);
-            _document.Append($@"\chshdng10000\chcbpat{colorNumber}\chcfpat{colorNumber}\cb{colorNumber}");
-            return this;
-        }
-        public RtfDocumentBuilder ForegroundColor(string htmlColor)
-            => ForegroundColor(HtmlColorHelper.GetColor(htmlColor));
-        public RtfDocumentBuilder ForegroundColor(Color color)
-        {
-            var colorNumber = Context.GetColorNumber(color);
-            _document.Append($@"\cf{colorNumber}");
-            return this;
-        }
-        public RtfDocumentBuilder Paragraph()
-        {
-            _document.Append(@"\par");
-            return this;
-        }
-        public RtfDocumentBuilder FontSize(float fontSize)
-        {
-            _document.Append($@"\fs{fontSize}");
-            return this;
+            return Rtf($@"\chshdng10000\chcbpat{colorNumber}\chcfpat{colorNumber}\cb{colorNumber}");
         }
         public RtfDocumentBuilder HorizontalAligment(HorizontalAligment aligment)
         {
@@ -52,47 +32,18 @@ namespace NtFreX.HtmlToRtfConverter.Rtf
                 _document.Append(@"\qc");
             return this;
         }
-        public RtfDocumentBuilder FontStyle(string font)
-        {
-            var fontNumber = Context.GetFontNumber(font);
-            _document.Append($@"\f{fontNumber}");
-            return this;
-        }
-        public RtfDocumentBuilder Bold()
-        {
-            _document.Append(@"\b");
-            return this;
-        }
-        public RtfDocumentBuilder Italic()
-        {
-            _document.Append(@"\i");
-            return this;
-        }
-        public RtfDocumentBuilder Striketrough()
-        {
-            _document.Append(@"\strike");
-            return this;
-        }
-        public RtfDocumentBuilder NewLine()
-        {
-            _document.Append(@"\line");
-            return this;
-        }
-        public RtfDocumentBuilder Text(string text)
-        {
-            _document.Append("{" + text + "}");
-            return this;
-        }
-        public RtfDocumentBuilder OpenContext()
-        {
-            _document.Append("{");
-            return this;
-        }
-        public RtfDocumentBuilder CloseContext()
-        {
-            _document.Append("}");
-            return this;
-        }
+        public RtfDocumentBuilder ForegroundColor(string htmlColor) => ForegroundColor(HtmlColorHelper.GetColor(htmlColor));
+        public RtfDocumentBuilder ForegroundColor(Color color) => Rtf($@"\cf{Context.GetColorNumber(color)}");
+        public RtfDocumentBuilder Paragraph() => Rtf(@"\par");
+        public RtfDocumentBuilder FontSize(float fontSize) => Rtf($@"\fs{fontSize}");
+        public RtfDocumentBuilder FontStyle(string font) => Rtf($@"\f{Context.GetFontNumber(font)}");
+        public RtfDocumentBuilder Bold() => Rtf(@"\b");
+        public RtfDocumentBuilder Italic() => Rtf(@"\i");
+        public RtfDocumentBuilder Striketrough() => Rtf(@"\strike");
+        public RtfDocumentBuilder NewLine() => Rtf(@"\line");
+        public RtfDocumentBuilder Text(string text) => Rtf("{" + text + "}");
+        public RtfDocumentBuilder OpenContext() => Rtf("{");
+        public RtfDocumentBuilder CloseContext() => Rtf("}");
         public RtfDocumentBuilder Rtf(string rtf)
         {
             _document.Append(rtf);

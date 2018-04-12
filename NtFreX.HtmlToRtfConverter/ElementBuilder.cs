@@ -3,37 +3,17 @@ using NtFreX.HtmlToRtfConverter.Rtf;
 
 namespace NtFreX.HtmlToRtfConverter
 {
-    public class ElementBuilder
+    public class ElementBuilder : Builder<ElementSubject>
     {
-        private readonly ElementSubject _subject = new ElementSubject();
-
         public ElementBuilder ForegroundColor(Color color)
-        {
-            _subject.ForegroundColor = color;
-            return this;
-        }
+            => Apply<ElementBuilder, Color>(ref Subject.ForegroundColor, color);
         public ElementBuilder BackgroundColor(Color color)
-        {
-            _subject.BackgroundColor = color;
-            return this;
-        }
+            => Apply<ElementBuilder, Color>(ref Subject.BackgroundColor, color);
         public ElementBuilder FontSize(float fontSize)
-        {
-            _subject.FontSize = fontSize;
-            return this;
-        }
+            => Apply<ElementBuilder, float>(ref Subject.FontSize, fontSize);
         public ElementBuilder FontStyle(string fontStyle)
-        {
-            _subject.FontStyle = fontStyle;
-            return this;
-        }
+            => Apply<ElementBuilder, string>(ref Subject.FontStyle, fontStyle);
         public ElementBuilder HorizontalAligment(HorizontalAligment horizontalAligment)
-        {
-            _subject.HorizontalAligment = horizontalAligment;
-            return this;
-        }
-
-        internal ElementSubject Build()
-            => _subject;
+            => Apply<ElementBuilder, HorizontalAligment>(ref Subject.HorizontalAligment, horizontalAligment);
     }
 }

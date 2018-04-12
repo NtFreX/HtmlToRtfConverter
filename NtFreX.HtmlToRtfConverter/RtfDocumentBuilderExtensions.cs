@@ -24,7 +24,7 @@ namespace NtFreX.HtmlToRtfConverter
             HtmlElementType.Ul
         };
 
-        public static RtfDocumentBuilder ApplyConfigurationModifiers(this RtfDocumentBuilder builder, RtfGeneratorSubject subject, HtmlElementType elementType)
+        public static RtfDocumentBuilder ApplyConfigurationModifiers(this RtfDocumentBuilder builder, RtfConverterSubject subject, HtmlElementType elementType)
         {
             if (!subject.ElementSubjects.ContainsKey(elementType))
                 return builder;

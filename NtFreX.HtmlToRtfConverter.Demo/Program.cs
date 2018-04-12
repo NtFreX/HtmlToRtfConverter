@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using NtFreX.HtmlToRtfConverter.Html;
 using NtFreX.HtmlToRtfConverter.Html.Dom;
 using NtFreX.HtmlToRtfConverter.Rtf;
@@ -106,13 +107,13 @@ namespace NtFreX.HtmlToRtfConverter.Demo
 </blockquote>
 <div><!--block--><br></div>";
 
-            var parsedHtml = HtmlParser
+            var dom = HtmlParser
                 .Parse(html)
-                .GetHtml();
+                .ToArray();
             
-            Console.WriteLine(parsedHtml);
+            Console.WriteLine(dom.GetHtml());
 
-            var rtfGenerator = new RtfGeneratorBuilder()
+            var converter = new RtfConverterBuilder()
                 .Element(HtmlElementType.Pre, builder =>
                     builder.FontSize(12.0f)
                         .ForegroundColor(Color.Blue)
@@ -122,9 +123,9 @@ namespace NtFreX.HtmlToRtfConverter.Demo
                         .ForegroundColor(Color.Black)
                         .BackgroundColor(Color.LightSlateGray)
                         .HorizontalAligment(HorizontalAligment.Center))
-                .Build();
+                .BuildConverter();
             
-            var value = rtfGenerator.Generate(html);
+            var value = converter.Convert(dom);
 
             var path = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".rtf");
             File.WriteAllText(path, value);
