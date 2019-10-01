@@ -10,6 +10,7 @@ namespace NtFreX.HtmlToRtfConverter
         private const string BackgroundColor = "background-color";
         private const string TextAlign = "text-align";
         private const string FontSize = "font-size";
+        private const string FontFamily = "font-family";
 
         private static readonly Dictionary<string, Action<RtfDocumentBuilder, string>> AttributeModifiers = new Dictionary<string, Action<RtfDocumentBuilder, string>>
         {
@@ -23,7 +24,8 @@ namespace NtFreX.HtmlToRtfConverter
                     }
                 }
             },
-            { FontSize, (builder, value) => builder.FontSize(float.Parse(value)) }
+            { FontSize, (builder, value) => builder.FontSize(float.Parse(value)) },
+            { FontFamily, (builder, value) => builder.FontFamily(value) }
         };
 
         public static void ApplyAttribute(string name, string value, RtfDocumentBuilder builder)
