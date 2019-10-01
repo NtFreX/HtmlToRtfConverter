@@ -77,7 +77,7 @@ namespace NtFreX.HtmlToRtfConverter
             if (Math.Abs(configuration.FontSize - default(float)) < 0)
                 builder.FontSize(configuration.FontSize);
             if (!string.IsNullOrEmpty(configuration.FontStyle))
-                builder.FontStyle(configuration.FontStyle);
+                builder.FontFamily(configuration.FontStyle);
 
             builder.HorizontalAlignment(configuration.HorizontalAlignment);
 

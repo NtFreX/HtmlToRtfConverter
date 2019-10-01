@@ -36,7 +36,7 @@ namespace NtFreX.HtmlToRtfConverter.Rtf
         public RtfDocumentBuilder ForegroundColor(Color color) => Rtf($@"\cf{Context.GetColorNumber(color)}");
         public RtfDocumentBuilder Paragraph() => Rtf(@"\par");
         public RtfDocumentBuilder FontSize(float fontSize) => Rtf($@"\fs{fontSize}");
-        public RtfDocumentBuilder FontStyle(string font) => Rtf($@"\f{Context.GetFontNumber(font)}");
+        public RtfDocumentBuilder FontFamily(string font) => Rtf($@"\f{Context.GetFontNumber(font)}");
         public RtfDocumentBuilder Bold() => Rtf(@"\b");
         public RtfDocumentBuilder Italic() => Rtf(@"\i");
         public RtfDocumentBuilder Striketrough() => Rtf(@"\strike");
