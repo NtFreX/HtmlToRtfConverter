@@ -35,10 +35,10 @@ namespace NtFreX.HtmlToRtfConverter.Demo
 //    </body>
 //</html>";
             var html = @"
-<p style='text-align: center; font-size: 12; font-family: Times New Roman'>center aligned</p>
-<p style='text-align: left; font-size: 24; font-family: Arial'>left aligned</p>
-<p style='text-align: right; font-size: 36; font-family: Helvetica'>right aligned</p>
-<p style='text-align: justify; font-size: 48'>center aligned</p>
+<p style='text-align: center; font-size: 12pt; font-family: Times New Roman'>center aligned</p>
+<p style='text-align: left; font-size: 24pt; font-family: Arial'>left aligned</p>
+<p style='text-align: right; font-size: 36pt; font-family: Helvetica'>right aligned</p>
+<p style='text-align: justify; font-size: 48pt'>center aligned</p>
 
 <div>
 	<!--block-->
