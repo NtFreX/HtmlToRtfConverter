@@ -11,6 +11,7 @@ namespace NtFreX.HtmlToRtfConverter.Css
         public CssSize(string value)
         {
             var normalized = value.Trim().ToLowerInvariant();
+
             if (normalized.EndsWith("pt")) Type = CssSizeType.Pt;
             else if (normalized.EndsWith("in")) Type = CssSizeType.In;
             else if (normalized.EndsWith("pc")) Type = CssSizeType.Pc;
