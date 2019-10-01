@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using NtFreX.HtmlToRtfConverter.Css;
 using NtFreX.HtmlToRtfConverter.Rtf;
 
 namespace NtFreX.HtmlToRtfConverter
@@ -24,16 +25,18 @@ namespace NtFreX.HtmlToRtfConverter
                     }
                 }
             },
-            { FontSize, (builder, value) => builder.FontSize(float.Parse(value)) },
+            { FontSize, (builder, value) => builder.FontSize(new CssSize(value).ToPoints()) },
             { FontFamily, (builder, value) => builder.FontFamily(value) }
         };
 
         public static void ApplyAttribute(string name, string value, RtfDocumentBuilder builder)
         {
-            if (AttributeModifiers.ContainsKey(name))
+            if (!AttributeModifiers.ContainsKey(name))
             {
-                AttributeModifiers[name].Invoke(builder, value);
+                throw new NotSupportedException();
             }
+
+            AttributeModifiers[name].Invoke(builder, value);
         }
     }
 }
