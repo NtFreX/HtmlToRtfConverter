@@ -12,9 +12,6 @@ namespace NtFreX.HtmlToRtfConverter
     {
         private const string StyleAttributeName = "style";
 
-        private const string ColorStyleName = "color";
-        private const string BackgrounColorStyleName = "background-color";
-
         private static readonly HtmlElementType[] ClearingElements =
         {
             HtmlElementType.P,
@@ -82,7 +79,7 @@ namespace NtFreX.HtmlToRtfConverter
             if (!string.IsNullOrEmpty(configuration.FontStyle))
                 builder.FontStyle(configuration.FontStyle);
 
-            builder.HorizontalAligment(configuration.HorizontalAligment);
+            builder.HorizontalAlignment(configuration.HorizontalAlignment);
 
             return builder;
         }
@@ -113,8 +110,9 @@ namespace NtFreX.HtmlToRtfConverter
                 builder.Rtf(@"{\li" + indent + @"\pntext\pn" + symbolType + @"}"); //TODO: move to rtfDocumentBuilder
             }
             if (elementType == HtmlElementType.Blockquote)
-                builder.ForegroundColor(Color.LightSlateGray)
-                    .HorizontalAligment(HorizontalAligment.Center);
+                builder
+                    .ForegroundColor(Color.LightSlateGray)
+                    .HorizontalAlignment(HorizontalAlignment.Center);
             if (elementType == HtmlElementType.Pre)
                 builder.Rtf(@"\brdrt\brdrs\brdrb\brdrs\brdrl\brdrs\brdrr\brdrs\brdrw10\brsp20\brdrcf0"); //TODO: move to rtfDocumentBuilder
             if (elementType == HtmlElementType.Br)
@@ -133,10 +131,8 @@ namespace NtFreX.HtmlToRtfConverter
                     var keyValue = stylePart.Split(":".ToCharArray());
                     var key = keyValue[0].ToLower();
                     var value = keyValue[1];
-                    if (key == ColorStyleName)
-                        builder.ForegroundColor(value);
-                    else if (key == BackgrounColorStyleName)
-                        builder.BackgroundColor(value);
+
+                    HtmlAttributeModifiers.ApplyAttribute(key, value, builder);
                 }
             }
             return builder;

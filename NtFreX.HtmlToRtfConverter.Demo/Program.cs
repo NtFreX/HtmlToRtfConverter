@@ -34,7 +34,13 @@ namespace NtFreX.HtmlToRtfConverter.Demo
 //        </ul>
 //    </body>
 //</html>";
-            var html = @"<div>
+            var html = @"
+<p style='text-align: center'>center aligned</p>
+<p style='text-align: left'>left aligned</p>
+<p style='text-align: right'>right aligned</p>
+<p style='text-align: justify'>center aligned</p>
+
+<div>
 	<!--block-->
 	Lorem ipsum dolor sit amet,
 	<strong>consectetur</strong>
@@ -122,7 +128,7 @@ namespace NtFreX.HtmlToRtfConverter.Demo
                     builder.FontSize(8f)
                         .ForegroundColor(Color.Black)
                         .BackgroundColor(Color.LightSlateGray)
-                        .HorizontalAligment(HorizontalAligment.Center))
+                        .HorizontalAligment(HorizontalAlignment.Center))
                 .BuildConverter();
             
             var value = converter.Convert(dom);

@@ -1,9 +1,10 @@
 ﻿namespace NtFreX.HtmlToRtfConverter.Rtf
 {
-    public enum HorizontalAligment
+    public enum HorizontalAlignment
     {
         Left,
         Center,
-        Right
+        Right,
+        Justify
     }
 }

@@ -20,14 +20,16 @@ namespace NtFreX.HtmlToRtfConverter.Rtf
             var colorNumber = Context.GetColorNumber(color);
             return Rtf($@"\chshdng10000\chcbpat{colorNumber}\chcfpat{colorNumber}\cb{colorNumber}");
         }
-        public RtfDocumentBuilder HorizontalAligment(HorizontalAligment aligment)
+        public RtfDocumentBuilder HorizontalAlignment(HorizontalAlignment alignment)
         {
-            if (aligment == HtmlToRtfConverter.Rtf.HorizontalAligment.Left)
+            if (alignment == HtmlToRtfConverter.Rtf.HorizontalAlignment.Left)
                 _document.Append(@"\ql");
-            else if (aligment == HtmlToRtfConverter.Rtf.HorizontalAligment.Right)
+            else if (alignment == HtmlToRtfConverter.Rtf.HorizontalAlignment.Right)
                 _document.Append(@"\qr");
-            else if (aligment == HtmlToRtfConverter.Rtf.HorizontalAligment.Center)
+            else if (alignment == HtmlToRtfConverter.Rtf.HorizontalAlignment.Center)
                 _document.Append(@"\qc");
+            else if (alignment == HtmlToRtfConverter.Rtf.HorizontalAlignment.Justify)
+                _document.Append(@"\qj");
             return this;
         }
         public RtfDocumentBuilder ForegroundColor(string htmlColor) => ForegroundColor(HtmlColorHelper.GetColor(htmlColor));

@@ -13,7 +13,7 @@ namespace NtFreX.HtmlToRtfConverter
             => Apply<ElementBuilder, float>(ref Subject.FontSize, fontSize);
         public ElementBuilder FontStyle(string fontStyle)
             => Apply<ElementBuilder, string>(ref Subject.FontStyle, fontStyle);
-        public ElementBuilder HorizontalAligment(HorizontalAligment horizontalAligment)
-            => Apply<ElementBuilder, HorizontalAligment>(ref Subject.HorizontalAligment, horizontalAligment);
+        public ElementBuilder HorizontalAligment(HorizontalAlignment horizontalAlignment)
+            => Apply<ElementBuilder, HorizontalAlignment>(ref Subject.HorizontalAlignment, horizontalAlignment);
     }
 }
