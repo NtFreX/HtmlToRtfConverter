@@ -9,6 +9,6 @@ namespace NtFreX.HtmlToRtfConverter
         public Color BackgroundColor;
         public float FontSize;
         public string FontStyle;
-        public HorizontalAligment HorizontalAligment;
+        public HorizontalAlignment HorizontalAlignment;
     }
 }
