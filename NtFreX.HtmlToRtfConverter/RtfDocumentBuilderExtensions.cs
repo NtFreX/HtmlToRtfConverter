@@ -132,7 +132,7 @@ namespace NtFreX.HtmlToRtfConverter
                     var key = keyValue[0].ToLower();
                     var value = keyValue[1];
 
-                    HtmlAttributeModifiers.ApplyAttribute(key, value, builder);
+                    HtmlAttributeModifiers.ApplyAttribute(key.Trim(), value, builder);
                 }
             }
             return builder;
